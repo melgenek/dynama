@@ -2,7 +2,7 @@ package dynama.example
 
 import java.time.Instant
 
-import dynama.mapper.{DynamoAttribute, DynamoAttributeConverter, DynamoRecord, DynamoRecordConverter}
+import dynama.mapper.{DynamoAttribute, AttributeConverter, DynamoRecord, ItemConverter}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 
@@ -14,12 +14,12 @@ object Test extends App {
 
   case class C(length: Int, date: Instant)
 
-  implicit val InstantConverter: DynamoAttributeConverter[Instant] = DynamoAttributeConverter.StringConverter.imap(_.toString, Instant.parse)
+  implicit val InstantConverter: AttributeConverter[Instant] = AttributeConverter.StringConverter.imap(_.toString, Instant.parse)
 
-  implicit val CustomStringConverter: DynamoAttributeConverter[Int] =
-    DynamoAttributeConverter.StringConverter.imap("Prefixed::" + _, _.replace("Prefixed::", "").toInt)
+  implicit val CustomStringConverter: AttributeConverter[Int] =
+    AttributeConverter.StringConverter.imap("Prefixed::" + _, _.replace("Prefixed::", "").toInt)
 
-  implicit val CConverter: DynamoAttributeConverter[C] = DynamoAttributeConverter.StringConverter.imap(
+  implicit val CConverter: AttributeConverter[C] = AttributeConverter.StringConverter.imap(
     { c => s"${c.date}::${c.length}" },
     { value =>
       val parts = value.split("::")
@@ -27,7 +27,7 @@ object Test extends App {
     }
   )
 
-  val converter: DynamoRecordConverter[A] = DynamoRecord.converter[A]
+  val converter: ItemConverter[A] = DynamoRecord.converter[A]
 
   //  private val a = A(123, 3.0, B("cool!", C(11, Instant.now())))
   private val a = A(123, 3.0)
