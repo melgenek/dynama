@@ -19,4 +19,7 @@ before_cache:
 - find $HOME/.sbt        -name "*.lock"               -print -delete
 
 script:
-- sbt clean test
+- sbt clean coverage test coverageReport
+
+after_success:
+- sbt coveralls
