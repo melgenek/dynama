@@ -28,7 +28,7 @@ class ItemConverterMacro(val c: blackbox.Context) {
   def converter[T: WeakTypeTag]: Expr[ItemConverter[T]] = {
     val rootType: Type = weakTypeOf[T]
 
-    if (!isCaseClass(rootType.typeSymbol))
+    if (!isCaseClass(rootType))
       c.abort(c.enclosingPosition, s"Type $rootType is not a case class")
 
     val toMapEntries: Seq[Tree] = classToMapEntries(rootType, q"root")
@@ -56,10 +56,10 @@ class ItemConverterMacro(val c: blackbox.Context) {
         case m: MethodSymbol if m.isCaseAccessor => m
       }
       .flatMap { m =>
-        val methodType = m.info.typeSymbol
+        val methodType = m.info.resultType
         val fieldValue = q"$callPrefix.${m.name.toTermName}"
 
-        if (isFlatRef(m.info) && isCaseClass(methodType)) classToMapEntries(m.info, fieldValue)
+        if (isFlatRef(methodType) && isCaseClass(methodType)) classToMapEntries(methodType, fieldValue)
         else {
           val name = attributeName(m)
           val converter = findImplicit(tq"""$DynamoAttributeConverterTypeSymbol[$methodType]""")
@@ -72,20 +72,18 @@ class ItemConverterMacro(val c: blackbox.Context) {
 
   private def mapToClass(caseClassType: Type): Tree = {
     val companion: Symbol = caseClassType.typeSymbol.companion
-
     val constructorArguments: Iterable[Tree] = caseClassType.decls
       .collect {
         case m: MethodSymbol if m.isCaseAccessor => m
       }
       .map { m =>
-        val methodType = m.info.typeSymbol
+        val methodType = m.info.resultType
 
-        if (isFlatRef(m.info) && isCaseClass(methodType)) mapToClass(m.info)
+        if (isFlatRef(methodType) && isCaseClass(methodType)) mapToClass(methodType)
         else {
           val name: String = attributeName(m)
 
           val converter = findImplicit(tq"""$DynamoAttributeConverterTypeSymbol[$methodType]""")
-          //          q"$converter.fromAttribute(map($name))"
           q"dynama.mapper.ItemConverter.readAttribute(map, $name, $converter)"
         }
       }
@@ -107,8 +105,10 @@ class ItemConverterMacro(val c: blackbox.Context) {
     converter
   }
 
-  private def isCaseClass(symbol: Symbol): Boolean =
-    symbol.isClass && symbol.asClass.isCaseClass
+  private def isCaseClass(methodType: Type): Boolean = {
+    val methodTypeSymbol = methodType.typeSymbol
+    methodTypeSymbol.isClass && methodTypeSymbol.asClass.isCaseClass
+  }
 
   private def isFlatRef(methodType: Type): Boolean =
     methodType.resultType.typeConstructor =:= FlatRefType.typeConstructor

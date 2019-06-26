@@ -70,4 +70,16 @@ object AttributeConverter {
     override def fromAttribute(value: AttributeValue): String = value.s()
   }
 
+  implicit def optionConverter[A](implicit c: AttributeConverter[A]): AttributeConverter[Option[A]] =
+    new AttributeConverter[Option[A]] {
+      override def toAttribute(maybeValue: Option[A]): AttributeValue =
+        maybeValue
+          .map(value => c.toAttribute(value))
+          .getOrElse(AttributeValue.builder().nul(true).build())
+
+      override def fromAttribute(value: AttributeValue): Option[A] =
+        if (value.nul()) Option.empty
+        else Some(c.fromAttribute(value))
+    }
+
 }
