@@ -2,7 +2,7 @@ package dynama.example
 
 import java.time.Instant
 
-import dynama.mapper.{DynamoAttribute, AttributeConverter, DynamoRecord, ItemConverter}
+import dynama.mapper.{AttributeConverter, DynamoAttribute, ItemConverter}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 
@@ -27,7 +27,7 @@ object Test extends App {
     }
   )
 
-  val converter: ItemConverter[A] = DynamoRecord.converter[A]
+  val converter: ItemConverter[A] = ItemConverter.converter[A]
 
   //  private val a = A(123, 3.0, B("cool!", C(11, Instant.now())))
   private val a = A(123, 3.0)

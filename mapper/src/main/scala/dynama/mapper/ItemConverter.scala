@@ -1,11 +1,11 @@
 package dynama.mapper
 
-import dynama.mapper.ItemConverter.FlatRef
+import dynama.mapper.ItemConverter.{FlatRef, InvalidAttributeException, MissingAttributeException}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
-import scala.util.{Failure, Try}
+import scala.util.Failure
 
 
 trait ItemConverter[T] {
@@ -16,6 +16,19 @@ trait ItemConverter[T] {
 
 }
 
+object ItemConverter {
+
+  type FlatRef[A] = A
+
+  def converter[T]: ItemConverter[T] = macro ItemConverterMacro.converter[T]
+
+  sealed abstract class ItemConverterException(message: String, cause: Throwable) extends RuntimeException(message, cause)
+
+  class MissingAttributeException(name: String, cause: NoSuchElementException) extends ItemConverterException(s"No attribute with name '$name' is present", cause)
+
+  class InvalidAttributeException(name: String, cause: Throwable) extends ItemConverterException(s"Attribute with name '$name' has an invalid format", cause)
+
+}
 
 class ItemConverterMacro(val c: blackbox.Context) {
 
@@ -84,7 +97,7 @@ class ItemConverterMacro(val c: blackbox.Context) {
           val name: String = attributeName(m)
 
           val converter = findImplicit(tq"""$DynamoAttributeConverterTypeSymbol[$methodType]""")
-          q"dynama.mapper.ItemConverter.readAttribute(map, $name, $converter)"
+          q"dynama.mapper.ItemConverterUtil.readAttribute(map, $name, $converter)"
         }
       }
 
@@ -113,19 +126,14 @@ class ItemConverterMacro(val c: blackbox.Context) {
   private def isFlatRef(methodType: Type): Boolean =
     methodType.resultType.typeConstructor =:= FlatRefType.typeConstructor
 
-
 }
 
-object ItemConverter {
+object ItemConverterUtil {
 
-  type FlatRef[A] = A
-
-  def converter[T]: ItemConverter[T] = macro ItemConverterMacro.converter[T]
-
-  private[mapper] def readAttribute[T](map: Map[String, AttributeValue],
-                                       name: String,
-                                       attributeConverter: AttributeConverter[T]): T = {
-    Try(map(name))
+  def readAttribute[T](map: Map[String, AttributeValue],
+                       name: String,
+                       attributeConverter: AttributeConverter[T]): T = {
+    util.Try(map(name))
       .map(attributeConverter.fromAttribute)
       .recoverWith {
         case e: NoSuchElementException => Failure(new MissingAttributeException(name, e))
@@ -133,11 +141,5 @@ object ItemConverter {
       }
       .get
   }
-
-  sealed abstract class ItemConverterException(message: String, cause: Throwable) extends RuntimeException(message, cause)
-
-  class MissingAttributeException(name: String, cause: NoSuchElementException) extends ItemConverterException(s"No attribute with name '$name' is present", cause)
-
-  class InvalidAttributeException(name: String, cause: Throwable) extends ItemConverterException(s"Attribute with name '$name' has an invalid format", cause)
 
 }
