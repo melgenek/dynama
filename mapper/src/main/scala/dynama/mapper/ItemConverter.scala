@@ -104,11 +104,18 @@ class ItemConverterMacro(val c: blackbox.Context) {
     q"$companion(..$constructorArguments)"
   }
 
-  private def attributeName(m: c.universe.MethodSymbol): String =
+  private def attributeName(m: c.universe.MethodSymbol): String = {
     m.accessed.annotations
       .find(_.tree.tpe =:= DynamoAttributeType)
-      .map(_.tree.children.tail.head.toString)
+      .map(_.tree.children.tail.head)
+      .map { t =>
+        util.Try(c.eval(c.Expr[String](t))) match {
+          case scala.util.Success(name) => name
+          case _ => c.abort(c.enclosingPosition, "Invalid annotation")
+        }
+      }
       .getOrElse(m.name.toTermName.decodedName.toString)
+  }
 
   private def findImplicit(implicitType: Tree): Tree = {
     val converter = c.typecheck(q"_root_.scala.Predef.implicitly[$implicitType]", silent = true) match {
