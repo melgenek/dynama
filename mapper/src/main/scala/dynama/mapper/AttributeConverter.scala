@@ -65,7 +65,7 @@ object AttributeConverter {
   }
 
   implicit val StringConverter: AttributeConverter[String] = new AttributeConverter[String] {
-    override def toAttribute(t: String): AttributeValue = AttributeValue.builder().s(t.toString).build()
+    override def toAttribute(t: String): AttributeValue = AttributeValue.builder().s(t).build()
 
     override def fromAttribute(value: AttributeValue): String = value.s()
   }

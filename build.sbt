@@ -15,6 +15,11 @@ val mapper = project
   )
 
 val example = project.dependsOn(mapper)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.slf4j" % "slf4j-simple" % "1.7.26"
+    )
+  )
 
 val root = project.in(file("."))
   .aggregate(mapper, example)
