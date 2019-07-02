@@ -1,6 +1,7 @@
-package dynama.mapper
+package dynama.mapper.item.converter
 
 import dynama.mapper.ItemConverter.FlatRef
+import dynama.mapper.{AttributeConverter, ItemConverter}
 import org.scalatest.{FlatSpec, Matchers}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 

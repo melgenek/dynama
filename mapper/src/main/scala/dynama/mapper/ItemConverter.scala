@@ -30,12 +30,10 @@ object ItemConverter {
 
 }
 
-class ItemConverterMacro(val c: blackbox.Context) {
+class ItemConverterMacro(val c: blackbox.Context) extends ReflectUtil {
 
   import c.universe._
 
-  private val DynamoAttributeConverterTypeSymbol: c.universe.TypeSymbol = typeOf[AttributeConverter[_]].typeSymbol.asType
-  private val DynamoAttributeType = typeOf[DynamoAttribute]
   private val FlatRefType: c.universe.Type = typeOf[FlatRef[_]]
 
   def converter[T: WeakTypeTag]: Expr[ItemConverter[T]] = {
@@ -75,9 +73,9 @@ class ItemConverterMacro(val c: blackbox.Context) {
         if (isFlatRef(methodType) && isCaseClass(methodType)) classToMapEntries(methodType, fieldValue)
         else {
           val name = attributeName(m)
-          val converter = findImplicit(tq"""$DynamoAttributeConverterTypeSymbol[$methodType]""")
+          val attributeConverter = findImplicit(tq"""$DynamoAttributeConverterTypeSymbol[$methodType]""")
 
-          Seq(q"$name -> $converter.toAttribute($fieldValue)")
+          Seq(q"$name -> $attributeConverter.toAttribute($fieldValue)")
         }
       }
       .toSeq
@@ -102,32 +100,6 @@ class ItemConverterMacro(val c: blackbox.Context) {
       }
 
     q"$companion(..$constructorArguments)"
-  }
-
-  private def attributeName(m: c.universe.MethodSymbol): String = {
-    m.accessed.annotations
-      .find(_.tree.tpe =:= DynamoAttributeType)
-      .map(_.tree.children.tail.head)
-      .map { t =>
-        util.Try(c.eval(c.Expr[String](t))) match {
-          case scala.util.Success(name) => name
-          case _ => c.abort(c.enclosingPosition, "Invalid annotation")
-        }
-      }
-      .getOrElse(m.name.toTermName.decodedName.toString)
-  }
-
-  private def findImplicit(implicitType: Tree): Tree = {
-    val converter = c.typecheck(q"_root_.scala.Predef.implicitly[$implicitType]", silent = true) match {
-      case EmptyTree => c.abort(c.enclosingPosition, s"Unable to find implicit value of type $implicitType")
-      case t => t
-    }
-    converter
-  }
-
-  private def isCaseClass(methodType: Type): Boolean = {
-    val methodTypeSymbol = methodType.typeSymbol
-    methodTypeSymbol.isClass && methodTypeSymbol.asClass.isCaseClass
   }
 
   private def isFlatRef(methodType: Type): Boolean =

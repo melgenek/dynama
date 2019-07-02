@@ -72,8 +72,8 @@ object AttributeConverter {
 
   implicit def optionConverter[A](implicit c: AttributeConverter[A]): AttributeConverter[Option[A]] =
     new AttributeConverter[Option[A]] {
-      override def toAttribute(maybeValue: Option[A]): AttributeValue =
-        maybeValue
+      override def toAttribute(valueOpt: Option[A]): AttributeValue =
+        valueOpt
           .map(value => c.toAttribute(value))
           .getOrElse(AttributeValue.builder().nul(true).build())
 
