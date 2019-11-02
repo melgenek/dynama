@@ -7,7 +7,6 @@ import software.amazon.awssdk.services.dynamodb.model.{AttributeValue, GetItemRe
 
 import scala.collection.JavaConverters._
 
-
 class GetItemOpsSpec extends FlatSpec with Matchers {
 
   case class Example(field1: Int, @DynamoAttribute("customName") field2: Double)
