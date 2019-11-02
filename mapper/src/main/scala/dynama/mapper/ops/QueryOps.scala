@@ -1,7 +1,6 @@
 package dynama.mapper.ops
 
 import dynama.mapper.Aliases.EvaluatedKey
-import dynama.mapper.SortKey.SortKeyOps
 import dynama.mapper.{Asc, DynamoTable, PartitionKey, QueryOrder, SortKeyConditionExpression, SortedDynamoTable}
 import software.amazon.awssdk.awscore.AwsRequestOverrideConfiguration
 import software.amazon.awssdk.services.dynamodb.model.{QueryRequest, ReturnConsumedCapacity, Select}
