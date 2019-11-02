@@ -1,8 +1,8 @@
 language: scala
 sudo: false
-jdk: oraclejdk8
+jdk: openjdk8
 scala:
-  - 2.12.8
+  - 2.12.10
 
 notifications:
   email:
@@ -13,6 +13,7 @@ cache:
   directories:
   - $HOME/.ivy2/cache
   - $HOME/.sbt
+  - $HOME/.cache/coursier
 
 before_cache:
 - find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
