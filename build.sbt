@@ -9,9 +9,7 @@ val mapper = project
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-reflect" % scalaVersion.value,
       "software.amazon.awssdk" % "dynamodb" % "2.7.5",
-      "com.gu" %% "scanamo" % "1.0.0-M8",
 
-      "com.typesafe.slick" %% "slick" % "3.3.2",
       "org.scalatest" %% "scalatest" % "3.0.8" % Test
     )
   )
