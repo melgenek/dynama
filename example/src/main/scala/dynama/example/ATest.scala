@@ -24,7 +24,7 @@ object ATest extends App {
 
   }
 
- println(MyTable.queryRequest(10, MyTable.sortKey === 20))
+  println(MyTable.queryRequestWithSortKey(10, MyTable.sortKey === 20))
 
 
 }

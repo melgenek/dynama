@@ -11,7 +11,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Equals condition expression" should "be serializable" in {
     val expression = Equals(attribute1, 10)
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name = :attribute1Value")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -21,7 +21,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Less than condition expression" should "be serializable" in {
     val expression = attribute1 < 10
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name < :attribute1Value")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -31,7 +31,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Less than or equal condition expression" should "be serializable" in {
     val expression = attribute1 <= 10
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name <= :attribute1Value")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -41,7 +41,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Bigger than condition expression" should "be serializable" in {
     val expression = attribute1 > 10
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name > :attribute1Value")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -51,7 +51,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Bigger than or equal condition expression" should "be serializable" in {
     val expression = attribute1 >= 10
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name >= :attribute1Value")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -61,7 +61,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Between condition expression" should "be serializable" in {
     val expression = attribute1 between 10 -> 20
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("#attribute1Name BETWEEN :attribute1Value1 AND :attribute1Value2")
     keyMappings should be(Map("#attribute1Name" -> "attribute1"))
@@ -74,7 +74,7 @@ class SortKeyConditionExpressionSpec extends FlatSpec with Matchers {
   "Begins with condition expression" should "be serializable" in {
     val expression = attribute3 beginsWith "dict."
 
-    val (expressionStr, keyMappings, valueMappings) = expression.evaluate
+    val (expressionStr, keyMappings, valueMappings) = SortKeyConditionExpression.evaluate(expression)
 
     expressionStr should be("begins_with (#attribute3Name, :attribute3Value)")
     keyMappings should be(Map("#attribute3Name" -> "attribute3"))
