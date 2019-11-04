@@ -7,14 +7,15 @@ import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 import scala.util.Failure
 
-
-trait ItemConverter[T] {
-
+trait ItemWriter[T] {
   def toMap(t: T): Map[String, AttributeValue]
-
-  def fromMap(map: Map[String, AttributeValue]): T
-
 }
+
+trait ItemReader[T] {
+  def fromMap(map: Map[String, AttributeValue]): T
+}
+
+trait ItemConverter[T] extends ItemWriter[T] with ItemReader[T]
 
 object ItemConverter {
 
