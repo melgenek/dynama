@@ -1,7 +1,8 @@
 package dynama.mapper
 
-case class SortKey[A: AttributeConverter](name: String) {
+case class SortKey[A: AttributeConverter : AttributeTypeConverter](name: String) {
   val converter: AttributeConverter[A] = implicitly[AttributeConverter[A]]
+  val typeConverter: AttributeTypeConverter[A] = implicitly[AttributeTypeConverter[A]]
 }
 
 object SortKey {
@@ -27,4 +28,3 @@ object SortKey {
   }
 
 }
-

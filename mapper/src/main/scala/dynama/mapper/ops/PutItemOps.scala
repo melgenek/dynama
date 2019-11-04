@@ -11,7 +11,7 @@ trait PutItemOps[T] extends BaseOps {
   val writer: ItemWriter[T]
 
   def putItemRequest(item: T,
-                     overrideConfiguration: Option[AwsRequestOverrideConfiguration]): PutItemRequest = {
+                     overrideConfiguration: Option[AwsRequestOverrideConfiguration] = None): PutItemRequest = {
     val builder = PutItemRequest.builder()
       .item(writer.toMap(item).asJava)
       .tableName(tableName)

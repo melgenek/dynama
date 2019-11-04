@@ -2,8 +2,9 @@ package dynama.mapper
 
 import dynama.mapper.Aliases.EvaluatedKey
 
-case class PartitionKey[A: AttributeConverter](name: String) {
+case class PartitionKey[A: AttributeConverter : AttributeTypeConverter](name: String) {
   val converter: AttributeConverter[A] = implicitly[AttributeConverter[A]]
+  val typeConverter: AttributeTypeConverter[A] = implicitly[AttributeTypeConverter[A]]
 }
 
 object PartitionKey {
