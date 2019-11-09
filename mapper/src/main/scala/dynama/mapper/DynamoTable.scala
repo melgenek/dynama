@@ -8,7 +8,8 @@ abstract class DynamoTable[T: ItemWriter, K: AttributeConverter](val tableName: 
     with SimpleQueryOps[K]
     with PutItemOps[T]
     with SimpleCreateTableOps
-    with DeleteTableOps {
+    with DeleteTableOps
+    with DescribeTableOps {
   val writer = implicitly[ItemWriter[T]]
 }
 
@@ -18,6 +19,7 @@ abstract class SortedDynamoTable[T: ItemWriter, K: AttributeConverter, S: Attrib
     with SortedQueryOps[K, S]
     with PutItemOps[T]
     with SortedCreateTableOps
-    with DeleteTableOps {
+    with DeleteTableOps
+    with DescribeTableOps {
   val writer = implicitly[ItemWriter[T]]
 }

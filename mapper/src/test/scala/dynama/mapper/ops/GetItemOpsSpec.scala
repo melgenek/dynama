@@ -12,8 +12,7 @@ class GetItemOpsSpec extends FlatSpec with Matchers with TestTables {
     val request = SimpleTable.getItemRequest(10, consistentRead = true, Some(TestUtils.ConfigurationOverride))
 
     request should be(GetItemRequest.builder()
-      .key(Map("#pkName" -> AttributeValue.builder().n("10").build()).asJava)
-      .expressionAttributeNames(Map("#pkName" -> "field1").asJava)
+      .key(Map("field1" -> AttributeValue.builder().n("10").build()).asJava)
       .consistentRead(true)
       .overrideConfiguration(TestUtils.ConfigurationOverride)
       .tableName("sample-table")
@@ -26,12 +25,8 @@ class GetItemOpsSpec extends FlatSpec with Matchers with TestTables {
 
     request should be(GetItemRequest.builder()
       .key(Map(
-        "#pkName" -> AttributeValue.builder().n("10").build(),
-        "#skName" -> AttributeValue.builder().n("33.33").build()
-      ).asJava)
-      .expressionAttributeNames(Map(
-        "#pkName" -> "field1",
-        "#skName" -> "customName"
+        "field1" -> AttributeValue.builder().n("10").build(),
+        "customName" -> AttributeValue.builder().n("33.33").build()
       ).asJava)
       .consistentRead(true)
       .overrideConfiguration(TestUtils.ConfigurationOverride)

@@ -9,12 +9,10 @@ import scala.collection.JavaConverters._
 trait GetItemOps extends BaseOps {
 
   protected def getItemRequest(keys: Map[String, AttributeValue],
-                               keyNames: Map[String, String],
                                consistentRead: Boolean,
                                overrideConfiguration: Option[AwsRequestOverrideConfiguration]): GetItemRequest = {
     val builder = GetItemRequest.builder()
       .key(keys.asJava)
-      .expressionAttributeNames(keyNames.asJava)
       .consistentRead(consistentRead)
       .tableName(tableName)
 
@@ -32,8 +30,7 @@ trait SimpleGetItemOps[K] extends GetItemOps {
                      consistentRead: Boolean = false,
                      overrideConfiguration: Option[AwsRequestOverrideConfiguration] = None): GetItemRequest = {
     getItemRequest(
-      Map("#pkName" -> partitionKey.converter.toAttribute(partitionKeyValue)),
-      Map("#pkName" -> partitionKey.name),
+      Map(partitionKey.name -> partitionKey.converter.toAttribute(partitionKeyValue)),
       consistentRead,
       overrideConfiguration
     )
@@ -51,12 +48,8 @@ trait SortedGetItemOps[K, S] extends GetItemOps {
                      overrideConfiguration: Option[AwsRequestOverrideConfiguration] = None): GetItemRequest = {
     getItemRequest(
       Map(
-        "#pkName" -> partitionKey.converter.toAttribute(partitionKeyValue),
-        "#skName" -> sortKey.converter.toAttribute(sortKeyValue)
-      ),
-      Map(
-        "#pkName" -> partitionKey.name,
-        "#skName" -> sortKey.name
+        partitionKey.name -> partitionKey.converter.toAttribute(partitionKeyValue),
+        sortKey.name -> sortKey.converter.toAttribute(sortKeyValue)
       ),
       consistentRead,
       overrideConfiguration
