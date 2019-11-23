@@ -4,13 +4,19 @@ import java.util.concurrent.CompletableFuture
 
 import dynama.request.{DynamoRequest, DynamoRequestWithResponse}
 import dynama.util.CompletableFutureUtil
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
+import software.amazon.awssdk.services.dynamodb.model.{PutItemRequest, PutItemResponse}
 
 import scala.collection.JavaConverters._
 import scala.language.higherKinds
 
 trait PutOperations[F[_]] {
   _: DynamoClient[F] =>
+
+  def run(request: PutItemRequest.Builder): F[PutItemResponse] = {
+    F.liftF {
+      underlying.putItem(request.build())
+    }
+  }
 
   def run(request: DynamoRequest[PutItemRequest.Builder]): F[Unit] = {
     F.liftF {
