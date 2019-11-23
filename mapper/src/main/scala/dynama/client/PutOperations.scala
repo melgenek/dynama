@@ -13,34 +13,24 @@ trait PutOperations[F[_]] {
   _: DynamoClient[F] =>
 
   def run(request: DynamoRequest[PutItemRequest.Builder]): F[Unit] = {
-    request.builder
-      .map { builder =>
-        F.liftF {
-          underlying
-            .putItem(builder.build())
-            .thenCompose[Unit] { _ => CompletableFuture.completedFuture[Unit](()) }
-        }
-      }
-      .left.map(F.raiseError[Unit])
-      .merge
+    F.liftF {
+      underlying
+        .putItem(request.builder.build())
+        .thenCompose[Unit] { _ => CompletableFuture.completedFuture[Unit](()) }
+    }
   }
 
   def run[T](request: DynamoRequestWithResponse[PutItemRequest.Builder, T]): F[T] = {
-    request.builder
-      .map { builder =>
-        F.liftF {
-          underlying
-            .putItem(builder.build())
-            .thenCompose[T] { response =>
-              request.itemConverter.decode(response.attributes().asScala.toMap)
-                .map(item => CompletableFuture.completedFuture[T](item))
-                .left.map(e => CompletableFutureUtil.failedFuture[T](e))
-                .merge
-            }
+    F.liftF {
+      underlying
+        .putItem(request.builder.build())
+        .thenCompose[T] { response =>
+          request.itemConverter.decode(response.attributes().asScala.toMap)
+            .map(item => CompletableFuture.completedFuture[T](item))
+            .left.map(e => CompletableFutureUtil.failedFuture[T](e))
+            .merge
         }
-      }
-      .left.map(F.raiseError[T])
-      .merge
+    }
   }
 
 }

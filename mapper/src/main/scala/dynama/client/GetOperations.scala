@@ -13,21 +13,17 @@ trait GetOperations[F[_]] {
   _: DynamoClient[F] =>
 
   def run[T](request: DynamoRequestWithResponse[GetItemRequest.Builder, T]): F[T] = {
-    request.builder
-      .map { builder =>
-        F.liftF {
-          underlying
-            .getItem(builder.build())
-            .thenCompose[T] { response =>
-              request.itemConverter.decode(response.item().asScala.toMap)
-                .map(item => CompletableFuture.completedFuture[T](item))
-                .left.map(e => CompletableFutureUtil.failedFuture[T](e))
-                .merge
-            }
+    F.liftF {
+      underlying
+        .getItem(request.builder.build())
+        .thenCompose[T] { response =>
+          request.itemConverter.decode(response.item().asScala.toMap)
+            .map(item => CompletableFuture.completedFuture[T](item))
+            .left.map(e => CompletableFutureUtil.failedFuture[T](e))
+            .merge
         }
-      }
-      .left.map(F.raiseError[T])
-      .merge
+    }
+
   }
 
 }

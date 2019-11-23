@@ -6,17 +6,15 @@ import scala.concurrent.{Future, Promise}
 import scala.language.higherKinds
 import scala.util.{Failure, Success}
 
-trait FConverter[F[_]] {
+trait FLifter[F[_]] {
 
   def liftF[A](f: CompletableFuture[A]): F[A]
 
-  def raiseError[A](e: Throwable): F[A]
-
 }
 
-object FConverter {
+object FLifter {
 
-  implicit def futureConverter: FConverter[Future] = new FConverter[Future] {
+  implicit def futureConverter: FLifter[Future] = new FLifter[Future] {
     override def liftF[A](f: CompletableFuture[A]): Future[A] = {
       val p = Promise[A]()
       f.whenComplete((value: A, e: Throwable) => {
@@ -25,8 +23,6 @@ object FConverter {
       })
       p.future
     }
-
-    override def raiseError[A](e: Throwable): Future[A] = Future.failed(e)
   }
 
 }

@@ -7,7 +7,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 trait CompositeConverter[T] {
   def decode(map: Map[String, AttributeValue]): DecodingResult[T]
 
-  def encode(value: T): EncodingResult[Map[String, AttributeValue]]
+  def encode(value: T): Map[String, AttributeValue]
 }
 
 object CompositeConverter {
@@ -15,7 +15,7 @@ object CompositeConverter {
   implicit val UnitConverter: CompositeConverter[Unit] = new CompositeConverter[Unit] {
     override def decode(map: Map[String, AttributeValue]) = Right(())
 
-    override def encode(value: Unit) = Right(Map.empty)
+    override def encode(value: Unit) = Map.empty
   }
 
   def apply[T]: CompositeConverterBuilder[T] = new CompositeConverterBuilder[T]()
@@ -30,12 +30,9 @@ object CompositeConverter {
     }
   }
 
-  private[converter] def encodeAttribute[T, A](attribute: Attribute[T, A], value: T): EncodingResult[Map[String, AttributeValue]] = {
+  private[converter] def encodeAttribute[T, A](attribute: Attribute[T, A], value: T): Map[String, AttributeValue] = {
     attribute match {
-      case a@Simple(name, get) =>
-        a.converter
-          .encode(get(value))
-          .map(attribute => Map(name -> attribute))
+      case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
       case a@Composite(get) => a.converter.encode(get(value))
     }
   }
@@ -53,7 +50,7 @@ class CompositeConverterBuilder[T] {
         } yield constructor(value1)
       }
 
-      override def encode(value: T): EncodingResult[Map[String, AttributeValue]] = {
+      override def encode(value: T): Map[String, AttributeValue] = {
         encodeAttribute(attribute1, value)
       }
     }
@@ -70,11 +67,10 @@ class CompositeConverterBuilder[T] {
         } yield constructor(value1, value2)
       }
 
-      override def encode(value: T): EncodingResult[Map[String, AttributeValue]] = {
-        for {
-          map1 <- encodeAttribute(attribute1, value)
-          map2 <- encodeAttribute(attribute2, value)
-        } yield map1 ++ map2
+      override def encode(value: T): Map[String, AttributeValue] = {
+        val map1 = encodeAttribute(attribute1, value)
+        val map2 = encodeAttribute(attribute2, value)
+        map1 ++ map2
       }
     }
   }
@@ -92,12 +88,11 @@ class CompositeConverterBuilder[T] {
         } yield constructor(value1, value2, value3)
       }
 
-      override def encode(value: T): EncodingResult[Map[String, AttributeValue]] = {
-        for {
-          map1 <- encodeAttribute(attribute1, value)
-          map2 <- encodeAttribute(attribute2, value)
-          map3 <- encodeAttribute(attribute3, value)
-        } yield map1 ++ map2 ++ map3
+      override def encode(value: T): Map[String, AttributeValue] = {
+        val map1 = encodeAttribute(attribute1, value)
+        val map2 = encodeAttribute(attribute2, value)
+        val map3 = encodeAttribute(attribute3, value)
+        map1 ++ map2 ++ map3
       }
     }
   }

@@ -8,7 +8,7 @@ import scala.util.Try
 trait SimpleConverter[T] {
   def decode(attribute: AttributeValue): DecodingResult[T]
 
-  def encode(value: T): EncodingResult[AttributeValue]
+  def encode(value: T): AttributeValue
 }
 
 object SimpleConverter {
@@ -27,7 +27,8 @@ object SimpleConverter {
       }
     }
 
-    override def encode(value: Int): EncodingResult[AttributeValue] = Right(AttributeValue.builder().n(value.toString).build())
+    override def encode(value: Int): AttributeValue =
+      AttributeValue.builder().n(value.toString).build()
   }
 
   implicit val StringConverter: SimpleConverter[String] = new SimpleConverter[String] {
@@ -37,7 +38,8 @@ object SimpleConverter {
       }
     }
 
-    override def encode(value: String): EncodingResult[AttributeValue] = Right(AttributeValue.builder().s(value).build())
+    override def encode(value: String): AttributeValue =
+      AttributeValue.builder().s(value).build()
   }
 
 }

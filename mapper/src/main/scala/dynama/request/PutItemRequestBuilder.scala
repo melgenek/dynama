@@ -10,12 +10,9 @@ trait PutItemRequestBuilder[T] {
 
   def put(item: T): DynamoRequest[PutItemRequest.Builder] = {
     DynamoRequest(
-      converter.encode(item)
-        .map { encodedItem =>
-          PutItemRequest.builder()
-            .item(encodedItem.asJava)
-            .tableName(tableName)
-        }
+      PutItemRequest.builder()
+        .item(converter.encode(item).asJava)
+        .tableName(tableName)
     )
   }
 
