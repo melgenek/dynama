@@ -263,7 +263,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
   it should "decode big decimal class" in {
     val map = Map("value" -> AttributeValue.builder().n("1234123413413233.22134").build())
 
-    val result = doubleConverter.decode(map)
+    val result = bigDecimalConverter.decode(map)
 
     result.right.value should be(BigDecimalClass(BigDecimal("1234123413413233.22134")))
   }
