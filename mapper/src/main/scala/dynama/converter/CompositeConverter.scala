@@ -1,8 +1,9 @@
 package dynama.converter
 
-import dynama.converter.Attribute.{Composite, Simple}
-import dynama.converter.CompositeConverter.{decodeAttribute, encodeAttribute}
+import dynama.converter.Attribute.{Flat, Optional, Simple}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+
+import scala.reflect.ClassTag
 
 trait CompositeConverter[T] {
   def decode(map: Map[String, AttributeValue]): DecodingResult[T]
@@ -12,34 +13,38 @@ trait CompositeConverter[T] {
 
 object CompositeConverter {
 
-  implicit val UnitConverter: CompositeConverter[Unit] = new CompositeConverter[Unit] {
-    override def decode(map: Map[String, AttributeValue]) = Right(())
-
-    override def encode(value: Unit) = Map.empty
-  }
-
   def apply[T]: CompositeConverterBuilder[T] = new CompositeConverterBuilder[T]()
-
-  private[converter] def decodeAttribute[T, A](attribute: Attribute[T, A], map: Map[String, AttributeValue]): DecodingResult[A] = {
-    attribute match {
-      case a@Simple(name, _) =>
-        map.get(name)
-          .map(a.converter.decode)
-          .getOrElse(Left(DecodingError(s"There is no attribute '$name'")))
-      case a@Composite(_) => a.converter.decode(map)
-    }
-  }
-
-  private[converter] def encodeAttribute[T, A](attribute: Attribute[T, A], value: T): Map[String, AttributeValue] = {
-    attribute match {
-      case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
-      case a@Composite(get) => a.converter.encode(get(value))
-    }
-  }
 
 }
 
 class CompositeConverterBuilder[T] {
+
+  def chooseBy[A: SimpleConverter,
+    T1 <: T : ClassTag,
+    T2 <: T : ClassTag](attributeName: String, defaultValue: A)
+                       (option1: (A, CompositeConverter[T1]),
+                        option2: (A, CompositeConverter[T2])): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        map.get(attributeName)
+          .map(implicitly[SimpleConverter[A]].decode)
+          .map(_.left.map(DecodingError(s"The attribute '$attributeName' cannot be decoded", _)))
+          .getOrElse(Right(defaultValue))
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v)
+          case v: T2 => option2._2.encode(v)
+        }
+      }
+    }
+  }
 
   def apply[A1](attribute1: Attribute[T, A1])
                (constructor: A1 => T): CompositeConverter[T] = {
@@ -68,9 +73,7 @@ class CompositeConverterBuilder[T] {
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        val map1 = encodeAttribute(attribute1, value)
-        val map2 = encodeAttribute(attribute2, value)
-        map1 ++ map2
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value)
       }
     }
   }
@@ -89,11 +92,66 @@ class CompositeConverterBuilder[T] {
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        val map1 = encodeAttribute(attribute1, value)
-        val map2 = encodeAttribute(attribute2, value)
-        val map3 = encodeAttribute(attribute3, value)
-        map1 ++ map2 ++ map3
+        encodeAttribute(attribute1, value) ++
+          encodeAttribute(attribute2, value) ++
+          encodeAttribute(attribute3, value)
       }
+    }
+  }
+
+  def apply[A1, A2, A3, A4](attribute1: Attribute[T, A1],
+                            attribute2: Attribute[T, A2],
+                            attribute3: Attribute[T, A3],
+                            attribute4: Attribute[T, A4])
+                           (constructor: (A1, A2, A3, A4) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+        } yield constructor(value1, value2, value3, value4)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++
+          encodeAttribute(attribute2, value) ++
+          encodeAttribute(attribute3, value) ++
+          encodeAttribute(attribute4, value)
+      }
+    }
+  }
+
+  private def decodeAttribute[A](attribute: Attribute[T, A], map: Map[String, AttributeValue]): DecodingResult[A] = {
+    attribute match {
+      case a@Simple(name, _) =>
+        map.get(name)
+          .map(a.converter.decode)
+          .map(_.left.map(DecodingError(s"The attribute '$name' cannot be decoded", _)))
+          .getOrElse(Left(DecodingError(s"There is no attribute '$name'")))
+      case a: Flat[_, _] => a.converter.decode(map)
+      case a@Optional(name, _) =>
+        map.get(name)
+          .filterNot(_.nul())
+          .map(a.converter.decode)
+          .map {
+            _
+              .map(v => Some(v))
+              .left.map(e => DecodingError(s"The attribute '$name' cannot be decoded", e))
+          }
+          .getOrElse(Right(None))
+    }
+  }
+
+  private def encodeAttribute[A](attribute: Attribute[T, A], value: T): Map[String, AttributeValue] = {
+    attribute match {
+      case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
+      case a@Flat(get) => a.converter.encode(get(value))
+      case a: Optional[T, _] =>
+        a.get(value)
+          .map(v => Map(a.name -> a.converter.encode(v)))
+          .getOrElse(Map.empty)
     }
   }
 
