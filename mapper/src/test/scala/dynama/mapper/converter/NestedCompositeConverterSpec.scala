@@ -28,7 +28,7 @@ class NestedCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     Attribute("c", _.c)
   )(A.apply)
 
-  "CompositeConverter" should "convert nested case classes to map" in {
+  "CompositeConverter" should "encode a nested case classes to map" in {
     val test = A("value1", B("value2"), C("value3"))
 
     val result = AConverter.encode(test)
@@ -42,7 +42,7 @@ class NestedCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     ))
   }
 
-  it should "read nested case class from map" in {
+  it should "decode a nested case class from map" in {
     val map = Map(
       "attr1" -> AttributeValue.builder().s("value1").build(),
       "attr2" -> AttributeValue.builder().s("value2").build(),

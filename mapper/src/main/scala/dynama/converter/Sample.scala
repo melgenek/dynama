@@ -29,7 +29,7 @@ object Sample extends App {
     Attribute("name", _.name)
   )(Auth.User.apply)
 
-  implicit val AuthConverter = CompositeConverter[Auth].chooseBy("authType", "error")(
+  implicit val AuthConverter = CompositeConverter[Auth].chooseBy("authType", "error").options(
     "error" -> ErrorConverter,
     "user" -> UserConverter
   )

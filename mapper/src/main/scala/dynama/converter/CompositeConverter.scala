@@ -19,32 +19,8 @@ object CompositeConverter {
 
 class CompositeConverterBuilder[T] {
 
-  def chooseBy[A: SimpleConverter,
-    T1 <: T : ClassTag,
-    T2 <: T : ClassTag](attributeName: String, defaultValue: A)
-                       (option1: (A, CompositeConverter[T1]),
-                        option2: (A, CompositeConverter[T2])): CompositeConverter[T] = {
-    new CompositeConverter[T] {
-      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
-        map.get(attributeName)
-          .map(implicitly[SimpleConverter[A]].decode)
-          .map(_.left.map(DecodingError(s"The attribute '$attributeName' cannot be decoded", _)))
-          .getOrElse(Right(defaultValue))
-          .flatMap {
-            case option1._1 => option1._2.decode(map)
-            case option2._1 => option2._2.decode(map)
-            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
-          }
-      }
-
-      override def encode(value: T): Map[String, AttributeValue] = {
-        value match {
-          case v: T1 => option1._2.encode(v)
-          case v: T2 => option2._2.encode(v)
-        }
-      }
-    }
-  }
+  def chooseBy[A: SimpleConverter](attributeName: String, defaultValue: A) =
+    new CompositeConverterWithOptionsBuilder[T, A](attributeName, defaultValue)
 
   def apply[A1]
   (
@@ -939,6 +915,378 @@ class CompositeConverterBuilder[T] {
       case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
       case a@Flat(get) => a.converter.encode(get(value))
     }
+  }
+
+}
+
+class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultValue: A)
+                                                (implicit attributeConverter: SimpleConverter[A]) {
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag, T6 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5]),
+    option6: (A, CompositeConverter[T6])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case option6._1 => option6._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag, T6 <: T : ClassTag, T7 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5]),
+    option6: (A, CompositeConverter[T6]),
+    option7: (A, CompositeConverter[T7])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case option6._1 => option6._2.decode(map)
+            case option7._1 => option7._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag, T6 <: T : ClassTag, T7 <: T : ClassTag, T8 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5]),
+    option6: (A, CompositeConverter[T6]),
+    option7: (A, CompositeConverter[T7]),
+    option8: (A, CompositeConverter[T8])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case option6._1 => option6._2.decode(map)
+            case option7._1 => option7._2.decode(map)
+            case option8._1 => option8._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
+          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag, T6 <: T : ClassTag, T7 <: T : ClassTag, T8 <: T : ClassTag, T9 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5]),
+    option6: (A, CompositeConverter[T6]),
+    option7: (A, CompositeConverter[T7]),
+    option8: (A, CompositeConverter[T8]),
+    option9: (A, CompositeConverter[T9])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case option6._1 => option6._2.decode(map)
+            case option7._1 => option7._2.decode(map)
+            case option8._1 => option8._2.decode(map)
+            case option9._1 => option9._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
+          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
+          case v: T9 => option9._2.encode(v) + (attributeName -> attributeConverter.encode(option9._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  def options[T1 <: T : ClassTag, T2 <: T : ClassTag, T3 <: T : ClassTag, T4 <: T : ClassTag, T5 <: T : ClassTag, T6 <: T : ClassTag, T7 <: T : ClassTag, T8 <: T : ClassTag, T9 <: T : ClassTag, T10 <: T : ClassTag]
+  (
+    option1: (A, CompositeConverter[T1]),
+    option2: (A, CompositeConverter[T2]),
+    option3: (A, CompositeConverter[T3]),
+    option4: (A, CompositeConverter[T4]),
+    option5: (A, CompositeConverter[T5]),
+    option6: (A, CompositeConverter[T6]),
+    option7: (A, CompositeConverter[T7]),
+    option8: (A, CompositeConverter[T8]),
+    option9: (A, CompositeConverter[T9]),
+    option10: (A, CompositeConverter[T10])
+  ): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        discriminatorAttributeValue(map)
+          .flatMap {
+            case option1._1 => option1._2.decode(map)
+            case option2._1 => option2._2.decode(map)
+            case option3._1 => option3._2.decode(map)
+            case option4._1 => option4._2.decode(map)
+            case option5._1 => option5._2.decode(map)
+            case option6._1 => option6._2.decode(map)
+            case option7._1 => option7._2.decode(map)
+            case option8._1 => option8._2.decode(map)
+            case option9._1 => option9._2.decode(map)
+            case option10._1 => option10._2.decode(map)
+            case another => Left(DecodingError(s"The attribute '$attributeName' has an unknown value '$another'"))
+          }
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        value match {
+          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
+          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
+          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
+          case v: T9 => option9._2.encode(v) + (attributeName -> attributeConverter.encode(option9._1))
+          case v: T10 => option10._2.encode(v) + (attributeName -> attributeConverter.encode(option10._1))
+          case v =>
+            throw new IllegalArgumentException(
+              s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
+            )
+        }
+      }
+    }
+  }
+
+  private def discriminatorAttributeValue(map: Map[String, AttributeValue]) = {
+    map.get(attributeName)
+      .map(implicitly[SimpleConverter[A]].decode)
+      .map(_.left.map(DecodingError(s"The attribute '$attributeName' cannot be decoded", _)))
+      .getOrElse(Right(defaultValue))
   }
 
 }

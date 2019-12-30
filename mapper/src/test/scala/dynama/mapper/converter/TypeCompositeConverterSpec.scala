@@ -48,7 +48,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     Attribute("value", _.value)
   )(BigDecimalClass.apply)
 
-  "CompositeConverter" should "convert int class to map" in {
+  "CompositeConverter" should "encode int class to map" in {
     val test = IntClass(Int.MinValue)
 
     val result = intConverter.encode(test)
@@ -58,7 +58,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read int class" in {
+  it should "decode int class" in {
     val map = Map("value" -> AttributeValue.builder().n("-2147483648").build())
 
     val result = intConverter.decode(map)
@@ -66,7 +66,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(IntClass(Int.MinValue))
   }
 
-  it should "not read invalid int" in {
+  it should "not decode invalid int" in {
     val map = Map("value" -> AttributeValue.builder().n("-2147483649").build())
 
     val result = intConverter.decode(map)
@@ -74,7 +74,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.left.value shouldBe a[DecodingError]
   }
 
-  it should "not read double into int class" in {
+  it should "not decode double into int class" in {
     val map = Map("value" -> AttributeValue.builder().n("20.12").build())
 
     val result = intConverter.decode(map)
@@ -82,7 +82,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.left.value shouldBe a[DecodingError]
   }
 
-  it should "not read string into int class" in {
+  it should "not decode string into int class" in {
     val map = Map("value" -> AttributeValue.builder().s("a string").build())
 
     val result = intConverter.decode(map)
@@ -90,7 +90,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.left.value shouldBe a[DecodingError]
   }
 
-  it should "convert double class to map" in {
+  it should "encode double class to map" in {
     val test = DoubleClass(Double.MinValue)
 
     val result = doubleConverter.encode(test)
@@ -100,7 +100,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read double class" in {
+  it should "decode double class" in {
     val map = Map("value" -> AttributeValue.builder().n("-1.7976931348623157E308").build())
 
     val result = doubleConverter.decode(map)
@@ -108,7 +108,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(DoubleClass(Double.MinValue))
   }
 
-  it should "convert float class to map" in {
+  it should "encode float class to map" in {
     val test = FloatClass(Float.MinValue)
 
     val result = floatConverter.encode(test)
@@ -118,7 +118,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read float class" in {
+  it should "decode float class" in {
     val map = Map("value" -> AttributeValue.builder().n("-3.4028235E38").build())
 
     val result = floatConverter.decode(map)
@@ -126,7 +126,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(FloatClass(Float.MinValue))
   }
 
-  it should "convert short class to map" in {
+  it should "encode short class to map" in {
     val test = ShortClass(Short.MinValue)
 
     val result = shortConverter.encode(test)
@@ -136,7 +136,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read short class" in {
+  it should "decode short class" in {
     val map = Map("value" -> AttributeValue.builder().n("-32768").build())
 
     val result = shortConverter.decode(map)
@@ -144,7 +144,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(ShortClass(Short.MinValue))
   }
 
-  it should "convert byte class to map" in {
+  it should "encode byte class to map" in {
     val test = ByteClass(Byte.MinValue)
 
     val result = byteConverter.encode(test)
@@ -154,7 +154,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read byte class" in {
+  it should "decode byte class" in {
     val map = Map("value" -> AttributeValue.builder().n("-128").build())
 
     val result = byteConverter.decode(map)
@@ -162,7 +162,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(ByteClass(Byte.MinValue))
   }
 
-  it should "convert char class to map" in {
+  it should "encode char class to map" in {
     val test = CharClass('a')
 
     val result = charConverter.encode(test)
@@ -172,7 +172,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read char class" in {
+  it should "decode char class" in {
     val map = Map("value" -> AttributeValue.builder().s("ab").build())
 
     val result = charConverter.decode(map)
@@ -180,7 +180,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(CharClass('a'))
   }
 
-  it should "not read char class when the string is empty" in {
+  it should "not decode char class when the string is empty" in {
     val map = Map("value" -> AttributeValue.builder().s("").build())
 
     val result = charConverter.decode(map)
@@ -188,7 +188,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.left.value shouldBe a[DecodingError]
   }
 
-  it should "convert long class to map" in {
+  it should "encode long class to map" in {
     val test = LongClass(Long.MinValue)
 
     val result = longConverter.encode(test)
@@ -198,7 +198,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read long class" in {
+  it should "decode long class" in {
     val map = Map("value" -> AttributeValue.builder().n("-9223372036854775808").build())
 
     val result = longConverter.decode(map)
@@ -206,7 +206,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(LongClass(Long.MinValue))
   }
 
-  it should "convert boolean class to map" in {
+  it should "encode boolean class to map" in {
     val test = BooleanClass(true)
 
     val result = booleanConverter.encode(test)
@@ -216,7 +216,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read boolean class" in {
+  it should "decode boolean class" in {
     val map = Map("value" -> AttributeValue.builder().bool(true).build())
 
     val result = booleanConverter.decode(map)
@@ -224,7 +224,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(BooleanClass(true))
   }
 
-  it should "read false boolean class when boolean value is not set" in {
+  it should "decode false boolean class when boolean value is not set" in {
     val map = Map("value" -> AttributeValue.builder().build())
 
     val result = booleanConverter.decode(map)
@@ -232,7 +232,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(BooleanClass(false))
   }
 
-  it should "convert string class to map" in {
+  it should "encode string class to map" in {
     val test = StringClass("abc")
 
     val result = stringConverter.encode(test)
@@ -242,7 +242,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read string class" in {
+  it should "decode string class" in {
     val map = Map("value" -> AttributeValue.builder().s("abc").build())
 
     val result = stringConverter.decode(map)
@@ -250,7 +250,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     result.right.value should be(StringClass("abc"))
   }
 
-  it should "convert big decimal class to map" in {
+  it should "encode big decimal class to map" in {
     val test = BigDecimalClass(BigDecimal("1234123413413233.22134"))
 
     val result = bigDecimalConverter.encode(test)
@@ -260,7 +260,7 @@ class TypeCompositeConverterSpec extends FlatSpec with Matchers with EitherValue
     ))
   }
 
-  it should "read big decimal class" in {
+  it should "decode big decimal class" in {
     val map = Map("value" -> AttributeValue.builder().n("1234123413413233.22134").build())
 
     val result = doubleConverter.decode(map)

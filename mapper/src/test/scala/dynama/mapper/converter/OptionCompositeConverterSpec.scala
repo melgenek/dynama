@@ -22,7 +22,7 @@ class OptionCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     Attribute("c", _.c)
   )(A.apply)
 
-  "CompositeConverter" should "convert nested optional attributes to map" in {
+  "CompositeConverter" should "encode nested optional attributes to map" in {
     val test = A("value1", Some(123), Some(C("value3")))
 
     val result = AConverter.encode(test)
@@ -36,7 +36,7 @@ class OptionCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     ))
   }
 
-  "CompositeConverter" should "convert nested optional attributes to map when they are none" in {
+  "CompositeConverter" should "encode nested optional attributes to map when they are none" in {
     val test = A("value1", None, None)
 
     val result = AConverter.encode(test)
@@ -48,7 +48,7 @@ class OptionCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     ))
   }
 
-  it should "read nested case class from map" in {
+  it should "decode a nested case class from map" in {
     val map = Map(
       "attr1" -> AttributeValue.builder().s("value1").build(),
       "attr2" -> AttributeValue.builder().n("123").build(),
@@ -62,7 +62,7 @@ class OptionCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     result.right.value should be(A("value1", Some(123), Some(C("value3"))))
   }
 
-  it should "read nested case class from map without optional values" in {
+  it should "decode a nested case class from map without optional values" in {
     val map = Map(
       "attr1" -> AttributeValue.builder().s("value1").build(),
     )
@@ -72,7 +72,7 @@ class OptionCompositeConverterSpec extends FlatSpec with Matchers with EitherVal
     result.right.value should be(A("value1", None, None))
   }
 
-  it should "read nested case class from map with null optional values" in {
+  it should "decode a nested case class from map with null optional values" in {
     val map = Map(
       "attr1" -> AttributeValue.builder().s("value1").build(),
       "attr2" -> AttributeValue.builder().nul(true).build(),
