@@ -1,6 +1,6 @@
 package dynama.converter
 
-import dynama.converter.Attribute.{Flat, Optional, Simple}
+import dynama.converter.Attribute.{Flat, Simple}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 import scala.reflect.ClassTag
@@ -126,21 +126,9 @@ class CompositeConverterBuilder[T] {
   private def decodeAttribute[A](attribute: Attribute[T, A], map: Map[String, AttributeValue]): DecodingResult[A] = {
     attribute match {
       case a@Simple(name, _) =>
-        map.get(name)
-          .map(a.converter.decode)
-          .map(_.left.map(DecodingError(s"The attribute '$name' cannot be decoded", _)))
-          .getOrElse(Left(DecodingError(s"There is no attribute '$name'")))
+        a.converter.decode(map.getOrElse(name, NulAttributeValue))
+          .left.map(DecodingError(s"The attribute '$name' cannot be decoded", _))
       case a: Flat[_, _] => a.converter.decode(map)
-      case a@Optional(name, _) =>
-        map.get(name)
-          .filterNot(_.nul())
-          .map(a.converter.decode)
-          .map {
-            _
-              .map(v => Some(v))
-              .left.map(e => DecodingError(s"The attribute '$name' cannot be decoded", e))
-          }
-          .getOrElse(Right(None))
     }
   }
 
@@ -148,10 +136,6 @@ class CompositeConverterBuilder[T] {
     attribute match {
       case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
       case a@Flat(get) => a.converter.encode(get(value))
-      case a: Optional[T, _] =>
-        a.get(value)
-          .map(v => Map(a.name -> a.converter.encode(v)))
-          .getOrElse(Map.empty)
     }
   }
 

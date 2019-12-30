@@ -4,6 +4,8 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 import scala.util.Try
 
+import scala.collection.JavaConverters._
+
 trait SimpleConverter[T] {
   def decode(attribute: AttributeValue): DecodingResult[T]
 
@@ -39,6 +41,26 @@ object SimpleConverter {
 
     override def encode(value: String): AttributeValue =
       AttributeValue.builder().s(value).build()
+  }
+
+  implicit def optionConverter[T](implicit converter: SimpleConverter[T]): SimpleConverter[Option[T]] = new SimpleConverter[Option[T]] {
+    override def decode(attribute: AttributeValue): DecodingResult[Option[T]] =
+      Option(attribute)
+        .filterNot(_.nul())
+        .map(converter.decode)
+        .map(_.map(Some(_)))
+        .getOrElse(Right(Option.empty[T]))
+
+    override def encode(value: Option[T]): AttributeValue =
+      value.map(converter.encode).getOrElse(NulAttributeValue)
+  }
+
+  implicit def mapConverter[T](implicit converter: CompositeConverter[T]): SimpleConverter[T] = new SimpleConverter[T] {
+    override def decode(attribute: AttributeValue): DecodingResult[T] =
+      converter.decode(attribute.m().asScala.toMap)
+
+    override def encode(value: T): AttributeValue =
+      AttributeValue.builder().m(converter.encode(value).asJava).build()
   }
 
 }

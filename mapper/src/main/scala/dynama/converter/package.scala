@@ -1,5 +1,7 @@
 package dynama
 
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue
+
 package object converter {
 
   final case class DecodingError(message: String, cause: Throwable = null) extends RuntimeException(message, cause) {
@@ -10,5 +12,7 @@ package object converter {
   }
 
   type DecodingResult[T] = Either[DecodingError, T]
+
+  final val NulAttributeValue = AttributeValue.builder().nul(true).build()
 
 }
