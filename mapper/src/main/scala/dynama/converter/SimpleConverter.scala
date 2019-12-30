@@ -22,16 +22,32 @@ object SimpleConverter {
 
   def apply[A](implicit c: SimpleConverter[A]): SimpleConverter[A] = c
 
-  implicit val IntConverter: SimpleConverter[Int] = new SimpleConverter[Int] {
-    override def decode(attribute: AttributeValue): DecodingResult[Int] = {
-      Try(attribute.n().toInt)
+  private def numberConverter[T: Numeric](fromString: String => T, name: String): SimpleConverter[T] = new SimpleConverter[T] {
+    override def decode(attribute: AttributeValue): DecodingResult[T] =
+      Try(fromString(attribute.n()))
         .toEither
-        .left.map(DecodingError(s"The attribute value '${attribute.n()}' is not an Int", _))
-    }
+        .left.map(DecodingError(s"The attribute value '${attribute.n()}' is not $name", _))
 
-    override def encode(value: Int): AttributeValue = {
+    override def encode(value: T): AttributeValue =
       AttributeValue.builder().n(value.toString).build()
-    }
+  }
+
+  implicit val IntConverter: SimpleConverter[Int] = numberConverter(_.toInt, "an Int")
+  implicit val LongConverter: SimpleConverter[Long] = numberConverter(_.toLong, "a Long")
+  implicit val ShortConverter: SimpleConverter[Short] = numberConverter(_.toShort, "a Short")
+  implicit val ByteConverter: SimpleConverter[Byte] = numberConverter(_.toByte, "a Byte")
+  implicit val FloatConverter: SimpleConverter[Float] = numberConverter(_.toFloat, "a Float")
+  implicit val DoubleConverter: SimpleConverter[Double] = numberConverter(_.toDouble, "a Double")
+  implicit val BigDecimalConverter: SimpleConverter[BigDecimal] = numberConverter(BigDecimal(_), "a Double")
+
+  implicit val CharConverter: SimpleConverter[Char] = new SimpleConverter[Char] {
+    override def decode(attribute: AttributeValue): DecodingResult[Char] =
+      attribute.s().headOption
+        .map(Right(_))
+        .getOrElse(Left(DecodingError("Empty string is not a Char")))
+
+    override def encode(value: Char): AttributeValue =
+      AttributeValue.builder().s(value.toString).build()
   }
 
   implicit val StringConverter: SimpleConverter[String] = new SimpleConverter[String] {
@@ -41,6 +57,15 @@ object SimpleConverter {
 
     override def encode(value: String): AttributeValue =
       AttributeValue.builder().s(value).build()
+  }
+
+  implicit val BooleanConverter: SimpleConverter[Boolean] = new SimpleConverter[Boolean] {
+    override def decode(attribute: AttributeValue): DecodingResult[Boolean] = {
+      Right(attribute.bool())
+    }
+
+    override def encode(value: Boolean): AttributeValue =
+      AttributeValue.builder().bool(value).build()
   }
 
   implicit def optionConverter[T](implicit converter: SimpleConverter[T]): SimpleConverter[Option[T]] = new SimpleConverter[Option[T]] {
