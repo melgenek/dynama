@@ -46,8 +46,11 @@ class CompositeConverterBuilder[T] {
     }
   }
 
-  def apply[A1](attribute1: Attribute[T, A1])
-               (constructor: A1 => T): CompositeConverter[T] = {
+  def apply[A1]
+  (
+    attribute1: Attribute[T, A1]
+  )
+  (constructor: A1 => T): CompositeConverter[T] = {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
@@ -61,9 +64,13 @@ class CompositeConverterBuilder[T] {
     }
   }
 
-  def apply[A1, A2](attribute1: Attribute[T, A1],
-                    attribute2: Attribute[T, A2])
-                   (constructor: (A1, A2) => T): CompositeConverter[T] = {
+
+  def apply[A1, A2]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2]
+  )
+  (constructor: (A1, A2) => T): CompositeConverter[T] = {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
@@ -78,10 +85,14 @@ class CompositeConverterBuilder[T] {
     }
   }
 
-  def apply[A1, A2, A3](attribute1: Attribute[T, A1],
-                        attribute2: Attribute[T, A2],
-                        attribute3: Attribute[T, A3])
-                       (constructor: (A1, A2, A3) => T): CompositeConverter[T] = {
+
+  def apply[A1, A2, A3]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3]
+  )
+  (constructor: (A1, A2, A3) => T): CompositeConverter[T] = {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
@@ -92,18 +103,20 @@ class CompositeConverterBuilder[T] {
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++
-          encodeAttribute(attribute2, value) ++
-          encodeAttribute(attribute3, value)
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value)
       }
     }
   }
 
-  def apply[A1, A2, A3, A4](attribute1: Attribute[T, A1],
-                            attribute2: Attribute[T, A2],
-                            attribute3: Attribute[T, A3],
-                            attribute4: Attribute[T, A4])
-                           (constructor: (A1, A2, A3, A4) => T): CompositeConverter[T] = {
+
+  def apply[A1, A2, A3, A4]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4]
+  )
+  (constructor: (A1, A2, A3, A4) => T): CompositeConverter[T] = {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
@@ -115,10 +128,799 @@ class CompositeConverterBuilder[T] {
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++
-          encodeAttribute(attribute2, value) ++
-          encodeAttribute(attribute3, value) ++
-          encodeAttribute(attribute4, value)
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5]
+  )
+  (constructor: (A1, A2, A3, A4, A5) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+        } yield constructor(value1, value2, value3, value4, value5)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17],
+    attribute18: Attribute[T, A18]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+          value18 <- decodeAttribute(attribute18, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17],
+    attribute18: Attribute[T, A18],
+    attribute19: Attribute[T, A19]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+          value18 <- decodeAttribute(attribute18, map)
+          value19 <- decodeAttribute(attribute19, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17],
+    attribute18: Attribute[T, A18],
+    attribute19: Attribute[T, A19],
+    attribute20: Attribute[T, A20]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+          value18 <- decodeAttribute(attribute18, map)
+          value19 <- decodeAttribute(attribute19, map)
+          value20 <- decodeAttribute(attribute20, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17],
+    attribute18: Attribute[T, A18],
+    attribute19: Attribute[T, A19],
+    attribute20: Attribute[T, A20],
+    attribute21: Attribute[T, A21]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+          value18 <- decodeAttribute(attribute18, map)
+          value19 <- decodeAttribute(attribute19, map)
+          value20 <- decodeAttribute(attribute20, map)
+          value21 <- decodeAttribute(attribute21, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20, value21)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value) ++ encodeAttribute(attribute21, value)
+      }
+    }
+  }
+
+
+  def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22]
+  (
+    attribute1: Attribute[T, A1],
+    attribute2: Attribute[T, A2],
+    attribute3: Attribute[T, A3],
+    attribute4: Attribute[T, A4],
+    attribute5: Attribute[T, A5],
+    attribute6: Attribute[T, A6],
+    attribute7: Attribute[T, A7],
+    attribute8: Attribute[T, A8],
+    attribute9: Attribute[T, A9],
+    attribute10: Attribute[T, A10],
+    attribute11: Attribute[T, A11],
+    attribute12: Attribute[T, A12],
+    attribute13: Attribute[T, A13],
+    attribute14: Attribute[T, A14],
+    attribute15: Attribute[T, A15],
+    attribute16: Attribute[T, A16],
+    attribute17: Attribute[T, A17],
+    attribute18: Attribute[T, A18],
+    attribute19: Attribute[T, A19],
+    attribute20: Attribute[T, A20],
+    attribute21: Attribute[T, A21],
+    attribute22: Attribute[T, A22]
+  )
+  (constructor: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22) => T): CompositeConverter[T] = {
+    new CompositeConverter[T] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
+        for {
+          value1 <- decodeAttribute(attribute1, map)
+          value2 <- decodeAttribute(attribute2, map)
+          value3 <- decodeAttribute(attribute3, map)
+          value4 <- decodeAttribute(attribute4, map)
+          value5 <- decodeAttribute(attribute5, map)
+          value6 <- decodeAttribute(attribute6, map)
+          value7 <- decodeAttribute(attribute7, map)
+          value8 <- decodeAttribute(attribute8, map)
+          value9 <- decodeAttribute(attribute9, map)
+          value10 <- decodeAttribute(attribute10, map)
+          value11 <- decodeAttribute(attribute11, map)
+          value12 <- decodeAttribute(attribute12, map)
+          value13 <- decodeAttribute(attribute13, map)
+          value14 <- decodeAttribute(attribute14, map)
+          value15 <- decodeAttribute(attribute15, map)
+          value16 <- decodeAttribute(attribute16, map)
+          value17 <- decodeAttribute(attribute17, map)
+          value18 <- decodeAttribute(attribute18, map)
+          value19 <- decodeAttribute(attribute19, map)
+          value20 <- decodeAttribute(attribute20, map)
+          value21 <- decodeAttribute(attribute21, map)
+          value22 <- decodeAttribute(attribute22, map)
+        } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20, value21, value22)
+      }
+
+      override def encode(value: T): Map[String, AttributeValue] = {
+        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value) ++ encodeAttribute(attribute21, value) ++ encodeAttribute(attribute22, value)
       }
     }
   }

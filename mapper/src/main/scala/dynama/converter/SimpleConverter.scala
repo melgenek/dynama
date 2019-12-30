@@ -2,9 +2,8 @@ package dynama.converter
 
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
-import scala.util.Try
-
 import scala.collection.JavaConverters._
+import scala.util.Try
 
 trait SimpleConverter[T] {
   def decode(attribute: AttributeValue): DecodingResult[T]
