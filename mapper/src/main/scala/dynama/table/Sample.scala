@@ -12,14 +12,12 @@ object Sample extends App {
 
   case class Example(field1: String)
 
-  val pk = PartitionKey[String]("field1")
-
-  implicit val ExampleConverter = CompositeConverter[Example](
-    pk.toAttribute(_.field1)
-  )(Example.apply)
-
   object ExampleTable extends DynamoTable[Example, String]("example_table") {
-    override val partitionKey = pk
+    val partitionKey = PartitionKey[String]("field1")
+
+    val converter = CompositeConverter[Example](
+      partitionKey.toAttribute(_.field1)
+    )(Example.apply)
   }
 
   val ddb = DynamoDbAsyncClient.builder()

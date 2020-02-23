@@ -1,6 +1,5 @@
 package dynama.converter
 
-import dynama.converter.Attribute.{Flat, Simple}
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 
 import scala.reflect.ClassTag
@@ -26,20 +25,19 @@ class CompositeConverterBuilder[T] {
   (
     attribute1: Attribute[T, A1]
   )
-  (constructor: A1 => T): CompositeConverter[T] = {
+  (constructor: (A1) => T): CompositeConverter[T] = {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
+          value1 <- attribute1.converter.decode(map)
         } yield constructor(value1)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value)
+        attribute1.converter.encode(attribute1.get(value))
       }
     }
   }
-
 
   def apply[A1, A2]
   (
@@ -50,17 +48,17 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
         } yield constructor(value1, value2)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3]
   (
@@ -72,18 +70,19 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
         } yield constructor(value1, value2, value3)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4]
   (
@@ -96,19 +95,21 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
         } yield constructor(value1, value2, value3, value4)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5]
   (
@@ -122,20 +123,23 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6]
   (
@@ -150,21 +154,25 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7]
   (
@@ -180,22 +188,27 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8]
   (
@@ -212,23 +225,29 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9]
   (
@@ -246,24 +265,31 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]
   (
@@ -282,25 +308,33 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11]
   (
@@ -320,26 +354,35 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12]
   (
@@ -360,27 +403,37 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13]
   (
@@ -402,28 +455,39 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14]
   (
@@ -446,29 +510,41 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15]
   (
@@ -492,30 +568,43 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16]
   (
@@ -540,31 +629,45 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17]
   (
@@ -590,32 +693,47 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18]
   (
@@ -642,33 +760,49 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
-          value18 <- decodeAttribute(attribute18, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
+          value18 <- attribute18.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value)) ++
+          attribute18.converter.encode(attribute18.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19]
   (
@@ -696,34 +830,51 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
-          value18 <- decodeAttribute(attribute18, map)
-          value19 <- decodeAttribute(attribute19, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
+          value18 <- attribute18.converter.decode(map)
+          value19 <- attribute19.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value)) ++
+          attribute18.converter.encode(attribute18.get(value)) ++
+          attribute19.converter.encode(attribute19.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20]
   (
@@ -752,35 +903,53 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
-          value18 <- decodeAttribute(attribute18, map)
-          value19 <- decodeAttribute(attribute19, map)
-          value20 <- decodeAttribute(attribute20, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
+          value18 <- attribute18.converter.decode(map)
+          value19 <- attribute19.converter.decode(map)
+          value20 <- attribute20.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value)) ++
+          attribute18.converter.encode(attribute18.get(value)) ++
+          attribute19.converter.encode(attribute19.get(value)) ++
+          attribute20.converter.encode(attribute20.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21]
   (
@@ -810,36 +979,55 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
-          value18 <- decodeAttribute(attribute18, map)
-          value19 <- decodeAttribute(attribute19, map)
-          value20 <- decodeAttribute(attribute20, map)
-          value21 <- decodeAttribute(attribute21, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
+          value18 <- attribute18.converter.decode(map)
+          value19 <- attribute19.converter.decode(map)
+          value20 <- attribute20.converter.decode(map)
+          value21 <- attribute21.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20, value21)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value) ++ encodeAttribute(attribute21, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value)) ++
+          attribute18.converter.encode(attribute18.get(value)) ++
+          attribute19.converter.encode(attribute19.get(value)) ++
+          attribute20.converter.encode(attribute20.get(value)) ++
+          attribute21.converter.encode(attribute21.get(value))
       }
     }
   }
-
 
   def apply[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21, A22]
   (
@@ -870,50 +1058,55 @@ class CompositeConverterBuilder[T] {
     new CompositeConverter[T] {
       override def decode(map: Map[String, AttributeValue]): DecodingResult[T] = {
         for {
-          value1 <- decodeAttribute(attribute1, map)
-          value2 <- decodeAttribute(attribute2, map)
-          value3 <- decodeAttribute(attribute3, map)
-          value4 <- decodeAttribute(attribute4, map)
-          value5 <- decodeAttribute(attribute5, map)
-          value6 <- decodeAttribute(attribute6, map)
-          value7 <- decodeAttribute(attribute7, map)
-          value8 <- decodeAttribute(attribute8, map)
-          value9 <- decodeAttribute(attribute9, map)
-          value10 <- decodeAttribute(attribute10, map)
-          value11 <- decodeAttribute(attribute11, map)
-          value12 <- decodeAttribute(attribute12, map)
-          value13 <- decodeAttribute(attribute13, map)
-          value14 <- decodeAttribute(attribute14, map)
-          value15 <- decodeAttribute(attribute15, map)
-          value16 <- decodeAttribute(attribute16, map)
-          value17 <- decodeAttribute(attribute17, map)
-          value18 <- decodeAttribute(attribute18, map)
-          value19 <- decodeAttribute(attribute19, map)
-          value20 <- decodeAttribute(attribute20, map)
-          value21 <- decodeAttribute(attribute21, map)
-          value22 <- decodeAttribute(attribute22, map)
+          value1 <- attribute1.converter.decode(map)
+          value2 <- attribute2.converter.decode(map)
+          value3 <- attribute3.converter.decode(map)
+          value4 <- attribute4.converter.decode(map)
+          value5 <- attribute5.converter.decode(map)
+          value6 <- attribute6.converter.decode(map)
+          value7 <- attribute7.converter.decode(map)
+          value8 <- attribute8.converter.decode(map)
+          value9 <- attribute9.converter.decode(map)
+          value10 <- attribute10.converter.decode(map)
+          value11 <- attribute11.converter.decode(map)
+          value12 <- attribute12.converter.decode(map)
+          value13 <- attribute13.converter.decode(map)
+          value14 <- attribute14.converter.decode(map)
+          value15 <- attribute15.converter.decode(map)
+          value16 <- attribute16.converter.decode(map)
+          value17 <- attribute17.converter.decode(map)
+          value18 <- attribute18.converter.decode(map)
+          value19 <- attribute19.converter.decode(map)
+          value20 <- attribute20.converter.decode(map)
+          value21 <- attribute21.converter.decode(map)
+          value22 <- attribute22.converter.decode(map)
         } yield constructor(value1, value2, value3, value4, value5, value6, value7, value8, value9, value10, value11, value12, value13, value14, value15, value16, value17, value18, value19, value20, value21, value22)
       }
 
       override def encode(value: T): Map[String, AttributeValue] = {
-        encodeAttribute(attribute1, value) ++ encodeAttribute(attribute2, value) ++ encodeAttribute(attribute3, value) ++ encodeAttribute(attribute4, value) ++ encodeAttribute(attribute5, value) ++ encodeAttribute(attribute6, value) ++ encodeAttribute(attribute7, value) ++ encodeAttribute(attribute8, value) ++ encodeAttribute(attribute9, value) ++ encodeAttribute(attribute10, value) ++ encodeAttribute(attribute11, value) ++ encodeAttribute(attribute12, value) ++ encodeAttribute(attribute13, value) ++ encodeAttribute(attribute14, value) ++ encodeAttribute(attribute15, value) ++ encodeAttribute(attribute16, value) ++ encodeAttribute(attribute17, value) ++ encodeAttribute(attribute18, value) ++ encodeAttribute(attribute19, value) ++ encodeAttribute(attribute20, value) ++ encodeAttribute(attribute21, value) ++ encodeAttribute(attribute22, value)
+        attribute1.converter.encode(attribute1.get(value)) ++
+          attribute2.converter.encode(attribute2.get(value)) ++
+          attribute3.converter.encode(attribute3.get(value)) ++
+          attribute4.converter.encode(attribute4.get(value)) ++
+          attribute5.converter.encode(attribute5.get(value)) ++
+          attribute6.converter.encode(attribute6.get(value)) ++
+          attribute7.converter.encode(attribute7.get(value)) ++
+          attribute8.converter.encode(attribute8.get(value)) ++
+          attribute9.converter.encode(attribute9.get(value)) ++
+          attribute10.converter.encode(attribute10.get(value)) ++
+          attribute11.converter.encode(attribute11.get(value)) ++
+          attribute12.converter.encode(attribute12.get(value)) ++
+          attribute13.converter.encode(attribute13.get(value)) ++
+          attribute14.converter.encode(attribute14.get(value)) ++
+          attribute15.converter.encode(attribute15.get(value)) ++
+          attribute16.converter.encode(attribute16.get(value)) ++
+          attribute17.converter.encode(attribute17.get(value)) ++
+          attribute18.converter.encode(attribute18.get(value)) ++
+          attribute19.converter.encode(attribute19.get(value)) ++
+          attribute20.converter.encode(attribute20.get(value)) ++
+          attribute21.converter.encode(attribute21.get(value)) ++
+          attribute22.converter.encode(attribute22.get(value))
       }
-    }
-  }
-
-  private def decodeAttribute[A](attribute: Attribute[T, A], map: Map[String, AttributeValue]): DecodingResult[A] = {
-    attribute match {
-      case a@Simple(name, _) =>
-        a.converter.decode(map.getOrElse(name, NulAttributeValue))
-          .left.map(DecodingError(s"The attribute '$name' cannot be decoded", _))
-      case a: Flat[_, _] => a.converter.decode(map)
-    }
-  }
-
-  private def encodeAttribute[A](attribute: Attribute[T, A], value: T): Map[String, AttributeValue] = {
-    attribute match {
-      case a@Simple(name, get) => Map(name -> a.converter.encode(get(value)))
-      case a@Flat(get) => a.converter.encode(get(value))
     }
   }
 
