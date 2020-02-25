@@ -20,9 +20,7 @@ trait SimpleGetItemRequestBuilder[T, K] extends GetItemRequestBuilder {
 
   def get(partitionKeyValue: K): DynamoRequestWithResponse[GetItemRequest.Builder, T] = {
     DynamoRequestWithResponse(
-      get(Map(
-        partitionKey.name -> partitionKey.converter.encode(partitionKeyValue)
-      ))
+      get(partitionKey.converter(partitionKey.name).encode(partitionKeyValue))
     )
   }
 

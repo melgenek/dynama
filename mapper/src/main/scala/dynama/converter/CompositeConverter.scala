@@ -1132,8 +1132,8 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1162,9 +1162,9 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1195,10 +1195,10 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1231,11 +1231,11 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1270,12 +1270,12 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
-          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
+          case v: T6 => option6._2.encode(v) ++ (attributeConverter(attributeName).encode(option6._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1312,13 +1312,13 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
-          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
-          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
+          case v: T6 => option6._2.encode(v) ++ (attributeConverter(attributeName).encode(option6._1))
+          case v: T7 => option7._2.encode(v) ++ (attributeConverter(attributeName).encode(option7._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1357,14 +1357,14 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
-          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
-          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
-          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
+          case v: T6 => option6._2.encode(v) ++ (attributeConverter(attributeName).encode(option6._1))
+          case v: T7 => option7._2.encode(v) ++ (attributeConverter(attributeName).encode(option7._1))
+          case v: T8 => option8._2.encode(v) ++ (attributeConverter(attributeName).encode(option8._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1405,15 +1405,15 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
-          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
-          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
-          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
-          case v: T9 => option9._2.encode(v) + (attributeName -> attributeConverter.encode(option9._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
+          case v: T6 => option6._2.encode(v) ++ (attributeConverter(attributeName).encode(option6._1))
+          case v: T7 => option7._2.encode(v) ++ (attributeConverter(attributeName).encode(option7._1))
+          case v: T8 => option8._2.encode(v) ++ (attributeConverter(attributeName).encode(option8._1))
+          case v: T9 => option9._2.encode(v) ++ (attributeConverter(attributeName).encode(option9._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1456,16 +1456,16 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
 
       override def encode(value: T): Map[String, AttributeValue] = {
         value match {
-          case v: T1 => option1._2.encode(v) + (attributeName -> attributeConverter.encode(option1._1))
-          case v: T2 => option2._2.encode(v) + (attributeName -> attributeConverter.encode(option2._1))
-          case v: T3 => option3._2.encode(v) + (attributeName -> attributeConverter.encode(option3._1))
-          case v: T4 => option4._2.encode(v) + (attributeName -> attributeConverter.encode(option4._1))
-          case v: T5 => option5._2.encode(v) + (attributeName -> attributeConverter.encode(option5._1))
-          case v: T6 => option6._2.encode(v) + (attributeName -> attributeConverter.encode(option6._1))
-          case v: T7 => option7._2.encode(v) + (attributeName -> attributeConverter.encode(option7._1))
-          case v: T8 => option8._2.encode(v) + (attributeName -> attributeConverter.encode(option8._1))
-          case v: T9 => option9._2.encode(v) + (attributeName -> attributeConverter.encode(option9._1))
-          case v: T10 => option10._2.encode(v) + (attributeName -> attributeConverter.encode(option10._1))
+          case v: T1 => option1._2.encode(v) ++ (attributeConverter(attributeName).encode(option1._1))
+          case v: T2 => option2._2.encode(v) ++ (attributeConverter(attributeName).encode(option2._1))
+          case v: T3 => option3._2.encode(v) ++ (attributeConverter(attributeName).encode(option3._1))
+          case v: T4 => option4._2.encode(v) ++ (attributeConverter(attributeName).encode(option4._1))
+          case v: T5 => option5._2.encode(v) ++ (attributeConverter(attributeName).encode(option5._1))
+          case v: T6 => option6._2.encode(v) ++ (attributeConverter(attributeName).encode(option6._1))
+          case v: T7 => option7._2.encode(v) ++ (attributeConverter(attributeName).encode(option7._1))
+          case v: T8 => option8._2.encode(v) ++ (attributeConverter(attributeName).encode(option8._1))
+          case v: T9 => option9._2.encode(v) ++ (attributeConverter(attributeName).encode(option9._1))
+          case v: T10 => option10._2.encode(v) ++ (attributeConverter(attributeName).encode(option10._1))
           case v =>
             throw new IllegalArgumentException(
               s"The class '${v.getClass.getName}' cannot be encoded. Probably, you forgot to put its converter as a variant."
@@ -1476,10 +1476,8 @@ class CompositeConverterWithOptionsBuilder[T, A](attributeName: String, defaultV
   }
 
   private def discriminatorAttributeValue(map: Map[String, AttributeValue]) = {
-    map.get(attributeName)
-      .map(implicitly[SimpleConverter[A]].decode)
-      .map(_.left.map(DecodingError(s"The attribute '$attributeName' cannot be decoded", _)))
-      .getOrElse(Right(defaultValue))
+    val converter = implicitly[SimpleConverter[Option[A]]]
+    converter(attributeName).decode(map).map(_.getOrElse(defaultValue))
   }
 
 }

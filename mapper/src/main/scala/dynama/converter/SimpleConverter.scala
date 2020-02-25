@@ -5,31 +5,45 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-trait SimpleConverter[T] {
-  def decode(attribute: AttributeValue): DecodingResult[T]
+trait SimpleConverter[T] extends (String => CompositeConverter[T]) {
+  final def imap[A](contramap: A => T, map: T => A): SimpleConverter[A] =
+    name => new CompositeConverter[A] {
+      override def decode(m: Map[String, AttributeValue]): DecodingResult[A] = {
+        SimpleConverter.this.apply(name).decode(m).map(map)
+      }
 
-  def encode(value: T): AttributeValue
-
-  final def imap[A](contramap: A => T, map: T => A): SimpleConverter[A] = new SimpleConverter[A] {
-    override def decode(value: AttributeValue): DecodingResult[A] = SimpleConverter.this.decode(value).map(map)
-
-    override def encode(t: A): AttributeValue = SimpleConverter.this.encode(contramap(t))
-  }
+      override def encode(value: A): Map[String, AttributeValue] = {
+        SimpleConverter.this.apply(name).encode(contramap(value))
+      }
+    }
 }
 
 object SimpleConverter {
 
   def apply[A](implicit c: SimpleConverter[A]): SimpleConverter[A] = c
 
-  private def numberConverter[T: Numeric](fromString: String => T, name: String): SimpleConverter[T] = new SimpleConverter[T] {
-    override def decode(attribute: AttributeValue): DecodingResult[T] =
-      Try(fromString(attribute.n()))
-        .toEither
-        .left.map(DecodingError(s"The attribute value '${attribute.n()}' is not $name", _))
+  def create[A](decodeF: AttributeValue => DecodingResult[A],
+                encodeF: A => AttributeValue): SimpleConverter[A] = name => {
+    new CompositeConverter[A] {
+      override def decode(map: Map[String, AttributeValue]): DecodingResult[A] = {
+        val attribute = map.getOrElse(name, NulAttributeValue)
+        decodeF(attribute)
+      }
 
-    override def encode(value: T): AttributeValue =
-      AttributeValue.builder().n(value.toString).build()
+      override def encode(value: A): Map[String, AttributeValue] = {
+        Map(name -> encodeF(value))
+      }
+    }
   }
+
+  private final val NulAttributeValue = AttributeValue.builder().nul(true).build()
+
+  private def numberConverter[T: Numeric](fromString: String => T, name: String): SimpleConverter[T] = create[T](
+    attribute => Try(fromString(attribute.n()))
+      .toEither
+      .left.map(DecodingError(s"The attribute value '${attribute.n()}' is not $name", _)),
+    value => AttributeValue.builder().n(value.toString).build()
+  )
 
   implicit val IntConverter: SimpleConverter[Int] = numberConverter(_.toInt, "an Int")
   implicit val LongConverter: SimpleConverter[Long] = numberConverter(_.toLong, "a Long")
@@ -39,53 +53,42 @@ object SimpleConverter {
   implicit val DoubleConverter: SimpleConverter[Double] = numberConverter(_.toDouble, "a Double")
   implicit val BigDecimalConverter: SimpleConverter[BigDecimal] = numberConverter(BigDecimal(_), "a Double")
 
-  implicit val CharConverter: SimpleConverter[Char] = new SimpleConverter[Char] {
-    override def decode(attribute: AttributeValue): DecodingResult[Char] =
-      attribute.s().headOption
-        .map(Right(_))
-        .getOrElse(Left(DecodingError("Empty string is not a Char")))
+  implicit val CharConverter: SimpleConverter[Char] = create(
+    attribute => attribute.s().headOption
+      .map(Right(_))
+      .getOrElse(Left(DecodingError("Empty string is not a Char"))),
+    value => AttributeValue.builder().s(value.toString).build()
+  )
 
-    override def encode(value: Char): AttributeValue =
-      AttributeValue.builder().s(value.toString).build()
-  }
+  implicit val StringConverter: SimpleConverter[String] = create(
+    attribute => Right(attribute.s()),
+    value => AttributeValue.builder().s(value).build()
+  )
 
-  implicit val StringConverter: SimpleConverter[String] = new SimpleConverter[String] {
-    override def decode(attribute: AttributeValue): DecodingResult[String] = {
-      Right(attribute.s())
+  implicit val BooleanConverter: SimpleConverter[Boolean] = create(
+    attribute => Right(attribute.bool()),
+    value => AttributeValue.builder().bool(value).build()
+  )
+
+  implicit def optionConverter[T](implicit converter: SimpleConverter[T]): SimpleConverter[Option[T]] =
+    name => {
+      new CompositeConverter[Option[T]] {
+        override def decode(map: Map[String, AttributeValue]): DecodingResult[Option[T]] = {
+          val attribute = map.getOrElse(name, NulAttributeValue)
+          if (!attribute.nul()) converter(name).decode(map).map(Some(_))
+          else Right(Option.empty[T])
+        }
+
+        override def encode(value: Option[T]): Map[String, AttributeValue] = {
+          value.map(converter(name).encode).getOrElse(Map(name -> NulAttributeValue))
+        }
+      }
     }
 
-    override def encode(value: String): AttributeValue =
-      AttributeValue.builder().s(value).build()
-  }
-
-  implicit val BooleanConverter: SimpleConverter[Boolean] = new SimpleConverter[Boolean] {
-    override def decode(attribute: AttributeValue): DecodingResult[Boolean] = {
-      Right(attribute.bool())
-    }
-
-    override def encode(value: Boolean): AttributeValue =
-      AttributeValue.builder().bool(value).build()
-  }
-
-  implicit def optionConverter[T](implicit converter: SimpleConverter[T]): SimpleConverter[Option[T]] = new SimpleConverter[Option[T]] {
-    override def decode(attribute: AttributeValue): DecodingResult[Option[T]] =
-      Option(attribute)
-        .filterNot(_.nul())
-        .map(converter.decode)
-        .map(_.map(Some(_)))
-        .getOrElse(Right(Option.empty[T]))
-
-    override def encode(value: Option[T]): AttributeValue =
-      value.map(converter.encode).getOrElse(NulAttributeValue)
-  }
-
-  implicit def mapConverter[T](implicit converter: CompositeConverter[T]): SimpleConverter[T] = new SimpleConverter[T] {
-    override def decode(attribute: AttributeValue): DecodingResult[T] =
-      converter.decode(attribute.m().asScala.toMap)
-
-    override def encode(value: T): AttributeValue =
-      AttributeValue.builder().m(converter.encode(value).asJava).build()
-  }
+  implicit def mapConverter[T](implicit converter: CompositeConverter[T]): SimpleConverter[T] = create(
+    attribute => converter.decode(attribute.m().asScala.toMap),
+    value => AttributeValue.builder().m(converter.encode(value).asJava).build()
+  )
 
 }
 
